@@ -2,6 +2,9 @@ cd ./terraform
 
 terraform init
 
-terraform plan # verify only trying to create single vpc
+terraform plan
 
-trivy config --tf-exclude-downloaded-modules --skip-dirs "modules" ./
+trivy config \
+    --tf-exclude-downloaded-modules   `# dont need to scan modules as downloaded to .terraform` \
+    ./
+

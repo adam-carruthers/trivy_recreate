@@ -8,19 +8,27 @@ provider "aws" {
   secret_key                  = "mock_secret_key"
 }
 
+// Create vpc from local module without flow logs as a control
+module "vpc_created_from_local_module_without_flow_logs" {
+  source = "./modules/vpc"
+}
+
+// Create vpc from local module with flow logs
+module "vpc_created_from_local_module_with_flow_logs" {
+  source = "./modules/vpc"
+}
+resource "aws_flow_log" "flow_logs_to_local_module" {
+  iam_role_arn    = aws_iam_role.example.arn
+  log_destination = aws_cloudwatch_log_group.example.arn
+  traffic_type    = "ALL"
+  vpc_id          = module.vpc_created_from_local_module_with_flow_logs.vpc_id
+}
+
+// Create vpc from downloaded module with flow logs
+#trivy:ignore:avd-aws-0178
 module "vpc_created_from_downloaded_module" {
   source = "github.com/Liambeck99/trivy_recreate.git//terraform/modules/vpc"
 }
-
-resource "aws_vpc" "vpc_created_from_local_resource" {
-  cidr_block = "10.0.0.0/16"
-}
-
-
-// Simple VPC Flow Logs
-// Example from https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/flow_log
-
-// Connect flow logs to vpc_created_from_downloaded_module
 resource "aws_flow_log" "flow_logs_to_downloaded_module" {
   iam_role_arn    = aws_iam_role.example.arn
   log_destination = aws_cloudwatch_log_group.example.arn
@@ -28,13 +36,10 @@ resource "aws_flow_log" "flow_logs_to_downloaded_module" {
   vpc_id          = module.vpc_created_from_downloaded_module.vpc_id
 }
 
-// Connect flow logs to vpc_created_from_local_resource
-resource "aws_flow_log" "flow_logs_to_local_resource" {
-  iam_role_arn    = aws_iam_role.example.arn
-  log_destination = aws_cloudwatch_log_group.example.arn
-  traffic_type    = "ALL"
-  vpc_id          = aws_vpc.vpc_created_from_local_resource.id
-}
+
+
+// Simple VPC Flow Logs
+// Example from https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/flow_log
 
 #trivy:ignore-reason:exception is irrelevant so can be ignored 
 #trivy:ignore:avd-aws-0017
