@@ -1,0 +1,34 @@
+# Jetbrains
+.idea
+
+# terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+
+# certs/keys/pems
+*.crt
+*.csr
+*.key
+*.pem
+*.srl
+*id_rsa*
+/.venv/
+
+# Mac
+.DS_Store
+
+terraform/**/build/*
+
+# Python Tests
+.pytest_cache/
+__pycache__/
+.coverage
+
+# Build output
+build/*
+
+# VSCode
+.vscode
+
+.env*

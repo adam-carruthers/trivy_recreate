@@ -1,0 +1,3 @@
+terraform 1.6.6
+python 3.9.12
+trivy 0.48.1
